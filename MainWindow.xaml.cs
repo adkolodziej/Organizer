@@ -1,14 +1,15 @@
-﻿using System;
+﻿using Organizer.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-
 
 namespace Organizer
 {
     public partial class MainWindow : Window
     {
         public static MainWindow mainWindow;
+        private Date date;
         public MainWindow()
         {
             InitializeComponent();
@@ -48,8 +49,19 @@ namespace Organizer
         public void Calendar_DayChanged(object sender, DayChangedEventArgs e)
         {
             chosenDay.Text = e.Day.Date.ToString();
-
+            date = new Date();
+            date.Id = 1;
+            date.Day = e.Day.Date.Day;
+            date.Month = e.Day.Date.Month;
+            date.Year = e.Day.Date.Year;
             //save the text edits to persistant storage
+        }
+
+        private void SaveChangesButtonClick(object sender, RoutedEventArgs e)
+        {
+            clsDB.Get_DB_Connection();
+            clsDB.Execute_SQL("INSERT INTO Date ([Id],[Day],[Month],[Year]) VALUES ('"+date.Id+"', '"+date.Day+"' ,'"+date.Month+"', '"+date.Year+"')");
+            clsDB.Close_DB_Connection();
         }
     }
 }

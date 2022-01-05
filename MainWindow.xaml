@@ -55,7 +55,7 @@
                                         </Style>
                                     </Button.Resources>
                                 </Button>
-                                <Button Content="Save changes">
+                                <Button Content="Save changes" Click="SaveChangesButtonClick">
                                     <Button.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="5"/>
