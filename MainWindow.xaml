@@ -1,0 +1,136 @@
+﻿<Window xmlns:syncfusion="http://schemas.syncfusion.com/wpf"  x:Class="Organizer.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:Organizer="clr-namespace:Organizer"
+        mc:Ignorable="d"
+        Title="Organizer" Height="602" Width="1000" Foreground="White">
+
+
+    <Window.Background>
+        <RadialGradientBrush>
+            <GradientStop Color="#FF313131" Offset="0"/>
+            <GradientStop Color="#FF181818" Offset="1"/>
+        </RadialGradientBrush>
+    </Window.Background>
+
+    <Border Background="MediumPurple">
+        <StackPanel Orientation="Vertical">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <Border Padding="10" Grid.Row="0" Background="Gray" TextBlock.FontFamily="Century Gothic" TextBlock.FontSize="15">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Name="Backward" BorderThickness="0" TextBlock.Foreground="White" Background="Gray" Margin="0 0 5 0">
+                            <Image Source="Images/Arrow_left.png" Height="25" Width="25"/>
+                        </Button>
+                        <Button Name="Forward" BorderThickness="0" TextBlock.Foreground="White" Background="Gray" Margin="0 0 5 0">
+                            <Image Source="Images\Arrow_right.png" Height="25" Width="25"/>
+                        </Button>
+                        <Button Name="Menu" BorderThickness="0" Content="Menu" Margin="10 0 10 0" Background="Gray"  TextBlock.Foreground="White"/>
+                        <Button Name="Calendar" BorderThickness="0" Content="Calendar" Margin="10 0 10 0" Background="Gray" TextBlock.Foreground="White"/>
+                        <Button Name="Notes" BorderThickness="0" Content="Notes" Margin="10 0 10 0" Background="Gray" TextBlock.Foreground="White"/>
+                        <Button Name="Settings" BorderThickness="0" Content="Settings" Margin="10 0 10 0" Background="Gray" TextBlock.Foreground="White"/>
+                    </StackPanel>
+                </Border>
+
+                <Border Grid.Row="1" Background="MediumPurple">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="5*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Border Grid.Column="0" Background="Transparent">
+                            <StackPanel>
+                                <Button Content="New note">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="5"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+                                <Button Content="Save changes">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="5"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+                                <Button Content="Discard changes">
+                                    <Button.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="5"/>
+                                        </Style>
+                                    </Button.Resources>
+                                </Button>
+                                <ComboBox Name="NotesList" Text="Choose a Note" IsReadOnly="True">
+                                    <ComboBox.Resources>
+                                        <Style TargetType="Border">
+                                            <Setter Property="CornerRadius" Value="5"/>
+                                        </Style>
+                                    </ComboBox.Resources>
+                                </ComboBox>
+                            </StackPanel>
+                        </Border>
+
+                        <Border Grid.Column="1" Background="Transparent">
+                            <StackPanel>
+                                <Border>
+                                    <Grid>
+                                        <Grid.RowDefinitions>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                            <RowDefinition Height="*"/>
+                                        </Grid.RowDefinitions>
+                                        <Border Grid.Row="0">
+                                            <TextBox Name="chosenDay" Text="Chosen day" TextAlignment="Center" TextBlock.FontFamily="Century Gothic"/>
+                                        </Border>
+                                        <Border Grid.Row="1">
+                                            <StackPanel Orientation="Horizontal" Background="White">
+                                                <TextBlock Text="From: " FontSize="20" Foreground="Black" TextBlock.FontFamily="Century Gothic" Margin="10 0 115 0"/>
+                                                <syncfusion:SfTimePicker Name="StartHour" SetValueOnLostFocus="True" FormatString="HH:mm tt"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Grid.Row="2">
+                                            <StackPanel Orientation="Horizontal" Background="White">
+                                                <TextBlock Text="To: " FontSize="20" Foreground="Black" TextBlock.FontFamily="Century Gothic" Margin="10 0 141 0"/>
+                                                <syncfusion:SfTimePicker x:Name="EndHour" SetValueOnLostFocus="True" FormatString="HH:mm tt"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <ScrollViewer Grid.Row="3" Height="250">
+                                            <RichTextBox Name="NoteBox"/>
+                                        </ScrollViewer>
+                                        <StackPanel Orientation="Vertical" Grid.Row="4" Height="250">
+
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </StackPanel>
+                        </Border>
+
+                        <Grid Grid.Column="2" Margin="1 1 1 1">
+                            <Grid.Background>
+                                <RadialGradientBrush>
+                                    <GradientStop Color="#FF313131" Offset="0"/>
+                                    <GradientStop Color="#FF181818" Offset="1"/>
+                                </RadialGradientBrush>
+                            </Grid.Background>
+                            <Organizer:Calendar x:Name="myCalendar" DayChanged="Calendar_DayChanged" Margin="0,46,0,0" />
+                            <ComboBox x:Name="cboMonth" HorizontalAlignment="Left" Height="34" Margin="8,8,0,0" VerticalAlignment="Top" Width="152" FontSize="18.667" DisplayMemberPath="{Binding}" />
+                            <ComboBox x:Name="cboYear" Height="34" Margin="164,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="87" FontSize="18.667" DisplayMemberPath="{Binding}" />
+                        </Grid>
+
+                    </Grid>
+                </Border>
+            </Grid>
+        </StackPanel>
+    </Border>
+</Window>
