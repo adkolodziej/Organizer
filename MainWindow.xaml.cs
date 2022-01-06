@@ -50,7 +50,6 @@ namespace Organizer
         {
             chosenDay.Text = e.Day.Date.ToString();
             date = new Date();
-            date.Id = 1;
             date.Day = e.Day.Date.Day;
             date.Month = e.Day.Date.Month;
             date.Year = e.Day.Date.Year;
@@ -59,9 +58,10 @@ namespace Organizer
 
         private void SaveChangesButtonClick(object sender, RoutedEventArgs e)
         {
-            clsDB.Get_DB_Connection();
-            clsDB.Execute_SQL("INSERT INTO Date ([Id],[Day],[Month],[Year]) VALUES ('"+date.Id+"', '"+date.Day+"' ,'"+date.Month+"', '"+date.Year+"')");
+            clsDB.Execute_SQL("INSERT INTO Date ([Day],[Month],[Year]) VALUES ('"+date.Day+"' ,'"+date.Month+"', '"+date.Year+"')");
             clsDB.Close_DB_Connection();
+            Date date1 = DataBase.GetDate(1);
+            //clsDB.Execute_SQL("SELECT * FROM Date WHERE Day=@date.Day AND Month=@date.Month AND Year=@date.Year");
         }
     }
 }

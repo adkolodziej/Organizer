@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Organizer.TemporaryData
 {
-    class Date
+    public class Date
     {
+        private int id;
         private int day;
         private int month;
         private int year;

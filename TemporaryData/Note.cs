@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Organizer.TemporaryData
 {
-    class Note
+    public class Note
     {
+        private int dateId;
         private string content;
         private DateTime startHour;
         private DateTime endHour;
