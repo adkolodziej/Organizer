@@ -24,11 +24,12 @@ namespace Organizer
             return table;
         }
 
-        public static void Execute_SQL(string SQL_Text)
+        public static void ExecuteSQLQuery(string SQL_Text)
         {
             SqlConnection cn_connection = Get_DB_Connection();
             SqlCommand cmd_Command = new SqlCommand(SQL_Text, cn_connection);
             cmd_Command.ExecuteNonQuery();
+            cn_connection.Close();
         }
 
         public static void Close_DB_Connection()

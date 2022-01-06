@@ -1,6 +1,7 @@
 ﻿using Organizer.Models;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Windows;
 
@@ -58,10 +59,9 @@ namespace Organizer
 
         private void SaveChangesButtonClick(object sender, RoutedEventArgs e)
         {
-            clsDB.Execute_SQL("INSERT INTO Date ([Day],[Month],[Year]) VALUES ('"+date.Day+"' ,'"+date.Month+"', '"+date.Year+"')");
-            clsDB.Close_DB_Connection();
-            Date date1 = DataBase.GetDate(1);
-            //clsDB.Execute_SQL("SELECT * FROM Date WHERE Day=@date.Day AND Month=@date.Month AND Year=@date.Year");
+            Date date1 = new Date();
+            SqlConnection cn_connection = clsDB.Get_DB_Connection();
+            Dates dates = DataBase.GetAllDates();
         }
     }
 }

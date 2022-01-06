@@ -10,6 +10,8 @@ namespace Organizer.Models
     {
         private List<Date> dates;
 
+        public List<Date> ListOfDates { get => dates; }
+
         public Dates(List<Date> dates)
         {
             this.dates = dates;
