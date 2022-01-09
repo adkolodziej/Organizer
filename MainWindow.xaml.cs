@@ -10,6 +10,7 @@ namespace Organizer
     public partial class MainWindow : Window
     {
         public static MainWindow mainWindow;
+        public Dates dates;
         private Date date;
         public MainWindow()
         {

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Organizer.Models;
+using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
@@ -7,6 +8,7 @@ namespace Organizer
 {
     public class Calendar : Control
     {
+        public Dates dates;
         public ObservableCollection<CalendarDay> Days { get; set; }
         public ObservableCollection<string> DayNames { get; set; }
         public static readonly DependencyProperty CurrentDateProperty = DependencyProperty.Register("CurrentDate", typeof(DateTime), typeof(Calendar));
@@ -29,7 +31,7 @@ namespace Organizer
             DataContext = this;
             CurrentDate = DateTime.Today;
 
-            DayNames = new ObservableCollection<string> {"Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
+            DayNames = new ObservableCollection<string> { "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun" };
 
             Days = new ObservableCollection<CalendarDay>();
             BuildCalendar(DateTime.Today);
@@ -38,11 +40,13 @@ namespace Organizer
         public void BuildCalendar(DateTime targetDate)
         {
             Days.Clear();
-
+            InitialArtificialData.CreateArtificialDates();
+            dates = DataBase.GetAllDates();
+            dates.FindAllNotes();
             //Calculate when the first day of the month is and work out an 
             //offset so we can fill in any boxes before that.
             DateTime d = new DateTime(targetDate.Year, targetDate.Month, 1);
-            int offset = DayOfWeekNumber(d.DayOfWeek)-1;
+            int offset = DayOfWeekNumber(d.DayOfWeek) - 1;
             if (offset != 1) d = d.AddDays(-offset);
 
             //Show 6 weeks each with 7 days = 42
@@ -52,6 +56,11 @@ namespace Organizer
                 day.PropertyChanged += Day_Changed;
                 day.ButtonClicked += OnDayChosen;
                 day.IsToday = d == DateTime.Today;
+                Date date = dates.ListOfDates.Find(x => x.Day == day.Date.Day && x.Month == day.Date.Month && x.Year == day.Date.Year && x.Notes!=null);
+                if(date !=null)
+                {
+                    day.Notes = "Notes";
+                }
                 Days.Add(day);
                 d = d.AddDays(1);
             }
@@ -78,7 +87,7 @@ namespace Organizer
         }
     }
 
-    public class DayChangedEventArgs: EventArgs
+    public class DayChangedEventArgs : EventArgs
     {
         public CalendarDay Day { get; private set; }
 

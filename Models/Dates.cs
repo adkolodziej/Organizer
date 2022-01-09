@@ -16,5 +16,13 @@ namespace Organizer.Models
         {
             this.dates = dates;
         }
+
+        public void FindAllNotes()
+        {
+            foreach (var date in dates)
+            {
+                date.Notes = DataBase.GetNotesFromDate(date.Id);
+            }
+        }
     }
 }

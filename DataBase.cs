@@ -1,37 +1,14 @@
 ﻿using Organizer.Models;
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Organizer
 {
     public static class DataBase
     {
-        private static void DBUpdateAddRecord(string sURL, string sTitle)
-        {
-            sURL = sURL.Replace("'", "''");
-            sTitle = sTitle.Replace("'", "''");
-            string sSQL = "SELECT TOP 1 * FROM tbl_Details WHERE [URL] Like '" + sURL + "'";
-            DataTable tbl = clsDB.Get_DataTable(sSQL);
-
-            if (tbl.Rows.Count == 0)
-            {
-                string sql_Add = "INSERT INTO tbl_Details ([URL],[Title],[dtScan]) VALUES('" + sURL + "','" + sTitle + "',SYSDATETIME())";
-                clsDB.ExecuteSQLQuery(sql_Add);
-            }
-            else
-            {
-                string ID = tbl.Rows[0]["IDDetail"].ToString();
-                string sql_Update = "UPDATE tbl_Details SET [dtScan] = SYSDATETIME() WHERE IDDetail = " + ID;
-                clsDB.ExecuteSQLQuery(sql_Update);
-            }
-        }
-
         public static Note GetNote(int dateForeignKey, TimeSpan startHour)
         {
             SqlConnection cn_connection = clsDB.Get_DB_Connection();
@@ -56,6 +33,7 @@ namespace Organizer
                             note.DateForeignKey = Convert.ToInt32(reader["DateForeignKey"] as int? ?? default(int));
                             note.SetStartHour(reader["StartHour"].ToString(), true);
                             note.SetEndHour(reader["EndHour"].ToString(), true);
+                            note.Tag = Convert.ToString(reader["Tag"] as string);
                             note.Content = Convert.ToString(reader["Content"] as string);
                         }
                     }
@@ -65,7 +43,7 @@ namespace Organizer
             return note;
         }
 
-        public static List<Note> GetNotes(int dateId)
+        public static List<Note> GetNotesFromDate(int dateId)
         {
             SqlConnection cn_connection = clsDB.Get_DB_Connection();
             if (cn_connection.State != ConnectionState.Open)
@@ -86,11 +64,12 @@ namespace Organizer
                         Note note = new Note();
                         if (!reader.IsDBNull(reader.GetOrdinal("DateForeignKey")))
                         {
-                            note.DateForeignKey = Convert.ToInt32(reader["DateForeignKey"] as int? ?? default(int));
                             note.Id = Convert.ToInt32(reader["Id"] as int? ?? default(int));
-                            note.SetStartHour(reader["StartHour"] as string);
-                            note.SetEndHour(reader["EndHour"] as string);
-                            note.Content = reader["Content"] as string;
+                            note.DateForeignKey = Convert.ToInt32(reader["DateForeignKey"] as int? ?? default(int));
+                            note.SetStartHour(reader["StartHour"].ToString(), true);
+                            note.SetEndHour(reader["EndHour"].ToString(), true);
+                            note.Tag = Convert.ToString(reader["Tag"] as string);
+                            note.Content = Convert.ToString(reader["Content"] as string);
                         }
                         notes.Add(note);
                     }
@@ -199,10 +178,10 @@ namespace Organizer
 
         public static Date AddDate(Date date)
         {
-            if (date.Id == 0)
+            Date tempDate = GetDate(date.Day, date.Month, date.Year);
+            if (tempDate.Id == 0)
             {
                 clsDB.ExecuteSQLQuery("INSERT INTO Date ([Day],[Month],[Year]) VALUES ('" + date.Day + "' ,'" + date.Month + "', '" + date.Year + "')");
-                date = GetDate(date.Day, date.Month, date.Year);
             }
             else
             {
@@ -223,15 +202,16 @@ namespace Organizer
                     oCmd.ExecuteNonQuery();
                 }
             }
+            date = GetDate(date.Day, date.Month, date.Year);
             return date;
         }
 
         public static Note AddNote(Note note)
         {
-            if (note.Id == 0)
+            Note tempNote = GetNote(note.DateForeignKey, note.StartHour);
+            if (tempNote.Id == 0)
             {
-                clsDB.ExecuteSQLQuery("INSERT INTO Note ([DateForeignKey],[StartHour],[EndHour],[Content]) VALUES ('" + note.DateForeignKey + "' ,'" + note.StartHour + "', '" + note.EndHour + "', '" + note.Content + "')");
-                note = GetNote(note.DateForeignKey, note.StartHour);
+                clsDB.ExecuteSQLQuery("INSERT INTO Note ([DateForeignKey],[StartHour],[EndHour],[Tag],[Content]) VALUES ('" + note.DateForeignKey + "' ,'" + note.StartHour + "', '" + note.EndHour + "','" + note.Tag + "' ,'" + note.Content + "')");
             }
             else
             {
@@ -243,15 +223,17 @@ namespace Organizer
 
                 using (cn_connection)
                 {
-                    string oString = "UPDATE Note SET StartHour=@startHour, EndHour=@endHour, Content=@content WHERE Id=@id";
+                    string oString = "UPDATE Note SET StartHour=@startHour, EndHour=@endHour, Tag=@tag, Content=@content WHERE Id=@id";
                     SqlCommand oCmd = new SqlCommand(oString, cn_connection);
                     oCmd.Parameters.AddWithValue("@id", note.Id);
                     oCmd.Parameters.AddWithValue("@startHour", note.StartHour);
                     oCmd.Parameters.AddWithValue("@endHour", note.EndHour);
+                    oCmd.Parameters.AddWithValue("@tag", note.Tag);
                     oCmd.Parameters.AddWithValue("@content", note.Content);
                     oCmd.ExecuteNonQuery();
                 }
             }
+            note = GetNote(note.DateForeignKey, note.StartHour);
             return note;
         }
     }

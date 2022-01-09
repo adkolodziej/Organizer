@@ -9,10 +9,27 @@ namespace Organizer.Models
 {
     public class Note
     {
+        private string tag;
+
         public int Id { get; set; }
         public int DateForeignKey { get; set; }
         public TimeSpan StartHour { get; private set; }
         public TimeSpan EndHour { get; private set; }
+        public string Tag
+        {
+            get => tag;
+            set
+            {
+                if (value.Length > 10)
+                {
+                    tag = value.Substring(0, 10);
+                }
+                else
+                {
+                    tag = value;
+                }
+            }
+        }
         public string Content { get; set; }
 
         public void SetStartHour(string time, bool isFromDB = false)
