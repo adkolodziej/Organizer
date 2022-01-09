@@ -54,14 +54,18 @@ namespace Organizer
             date.Day = e.Day.Date.Day;
             date.Month = e.Day.Date.Month;
             date.Year = e.Day.Date.Year;
+            date = DataBase.AddDate(date);
             //save the text edits to persistant storage
         }
 
         private void SaveChangesButtonClick(object sender, RoutedEventArgs e)
         {
-            Date date1 = new Date();
-            SqlConnection cn_connection = clsDB.Get_DB_Connection();
-            Dates dates = DataBase.GetAllDates();
+            Note note = new Note();
+            note.DateForeignKey = date.Id;
+            note.Content = NoteBox.Text;
+            note.SetStartHour(StartHour.Value.ToString());
+            note.SetEndHour(EndHour.Value.ToString());
+            note=DataBase.AddNote(note);
         }
     }
 }

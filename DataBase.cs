@@ -32,6 +32,39 @@ namespace Organizer
             }
         }
 
+        public static Note GetNote(int dateForeignKey, TimeSpan startHour)
+        {
+            SqlConnection cn_connection = clsDB.Get_DB_Connection();
+            if (cn_connection.State != ConnectionState.Open)
+            {
+                cn_connection.Open();
+            }
+            Note note = new Note();
+            using (cn_connection)
+            {
+                string oString = "SELECT * FROM Note WHERE DateForeignKey=@dateForeignKey AND StartHour=@startHour";
+                SqlCommand oCmd = new SqlCommand(oString, cn_connection);
+                oCmd.Parameters.AddWithValue("@dateForeignKey", dateForeignKey);
+                oCmd.Parameters.AddWithValue("@startHour", startHour);
+                using (SqlDataReader reader = oCmd.ExecuteReader())
+                {
+                    while (reader.Read())
+                    {
+                        if (!reader.IsDBNull(reader.GetOrdinal("Id")))
+                        {
+                            note.Id = Convert.ToInt32(reader["Id"] as int? ?? default(int));
+                            note.DateForeignKey = Convert.ToInt32(reader["DateForeignKey"] as int? ?? default(int));
+                            note.SetStartHour(reader["StartHour"].ToString(), true);
+                            note.SetEndHour(reader["EndHour"].ToString(), true);
+                            note.Content = Convert.ToString(reader["Content"] as string);
+                        }
+                    }
+                    cn_connection.Close();
+                }
+            }
+            return note;
+        }
+
         public static List<Note> GetNotes(int dateId)
         {
             SqlConnection cn_connection = clsDB.Get_DB_Connection();
@@ -110,7 +143,7 @@ namespace Organizer
             {
                 string oString = "SELECT * FROM Date WHERE Day=@day AND Month=@month AND Year=@year";
                 SqlCommand oCmd = new SqlCommand(oString, cn_connection);
-                oCmd.Parameters.AddWithValue("@day",day);
+                oCmd.Parameters.AddWithValue("@day", day);
                 oCmd.Parameters.AddWithValue("@month", month);
                 oCmd.Parameters.AddWithValue("@year", year);
                 using (SqlDataReader reader = oCmd.ExecuteReader())
@@ -164,11 +197,11 @@ namespace Organizer
             return new Dates(tempDates);
         }
 
-        public static void AddDate(Date date)
+        public static Date AddDate(Date date)
         {
-            if(date.Id==0)
+            if (date.Id == 0)
             {
-                clsDB.ExecuteSQLQuery("INSERT INTO Date ([Day],[Month],[Year]) VALUES ('"+date.Day+"' ,'"+date.Month+"', '"+date.Year+"')");
+                clsDB.ExecuteSQLQuery("INSERT INTO Date ([Day],[Month],[Year]) VALUES ('" + date.Day + "' ,'" + date.Month + "', '" + date.Year + "')");
                 date = GetDate(date.Day, date.Month, date.Year);
             }
             else
@@ -190,11 +223,36 @@ namespace Organizer
                     oCmd.ExecuteNonQuery();
                 }
             }
+            return date;
         }
 
-        public static void AddNote(int dayId, Note note)
+        public static Note AddNote(Note note)
         {
+            if (note.Id == 0)
+            {
+                clsDB.ExecuteSQLQuery("INSERT INTO Note ([DateForeignKey],[StartHour],[EndHour],[Content]) VALUES ('" + note.DateForeignKey + "' ,'" + note.StartHour + "', '" + note.EndHour + "', '" + note.Content + "')");
+                note = GetNote(note.DateForeignKey, note.StartHour);
+            }
+            else
+            {
+                SqlConnection cn_connection = clsDB.Get_DB_Connection();
+                if (cn_connection.State != ConnectionState.Open)
+                {
+                    cn_connection.Open();
+                }
 
+                using (cn_connection)
+                {
+                    string oString = "UPDATE Note SET StartHour=@startHour, EndHour=@endHour, Content=@content WHERE Id=@id";
+                    SqlCommand oCmd = new SqlCommand(oString, cn_connection);
+                    oCmd.Parameters.AddWithValue("@id", note.Id);
+                    oCmd.Parameters.AddWithValue("@startHour", note.StartHour);
+                    oCmd.Parameters.AddWithValue("@endHour", note.EndHour);
+                    oCmd.Parameters.AddWithValue("@content", note.Content);
+                    oCmd.ExecuteNonQuery();
+                }
+            }
+            return note;
         }
     }
 }

@@ -106,7 +106,7 @@
                                             </StackPanel>
                                         </Border>
                                         <ScrollViewer Grid.Row="3" Height="250">
-                                            <RichTextBox Name="NoteBox"/>
+                                            <TextBox Name="NoteBox"/>
                                         </ScrollViewer>
                                         <StackPanel Orientation="Vertical" Grid.Row="4" Height="250">
 
