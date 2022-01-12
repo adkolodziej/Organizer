@@ -56,8 +56,8 @@ namespace Organizer
                 day.PropertyChanged += Day_Changed;
                 day.ButtonClicked += OnDayChosen;
                 day.IsToday = d == DateTime.Today;
-                Date date = dates.ListOfDates.Find(x => x.Day == day.Date.Day && x.Month == day.Date.Month && x.Year == day.Date.Year && x.Notes!=null);
-                if(date !=null)
+                Date date = dates.ListOfDates.Find(x => x.Day == day.Date.Day && x.Month == day.Date.Month && x.Year == day.Date.Year && x.Notes != null && x.Notes.Count > 0);
+                if (date != null)
                 {
                     day.Notes = "Notes";
                 }

@@ -62,5 +62,16 @@ namespace Organizer.Models
                 EndHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), Convert.ToInt32(splitHour[2]));
             }
         }
+
+        public DateTime GetStartHourAsDateTime()
+        {
+            
+            return new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, StartHour.Hours, StartHour.Minutes, StartHour.Seconds);
+        }
+
+        public DateTime GetEndHourAsDateTime()
+        {
+            return new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, EndHour.Hours, EndHour.Minutes, EndHour.Seconds);
+        }
     }
 }
