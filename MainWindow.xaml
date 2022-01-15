@@ -62,7 +62,7 @@
                                         </Style>
                                     </Button.Resources>
                                 </Button>
-                                <Button Content="Discard changes">
+                                <Button Content="Delete note" Click="DeleteNoteClickButton">
                                     <Button.Resources>
                                         <Style TargetType="Border">
                                             <Setter Property="CornerRadius" Value="5"/>

@@ -26,6 +26,8 @@ namespace Organizer
 			December
 		}
 
+		private event Action OnDataBaseDataChange;
+
 		public Dates dates;
 
 		private Date currentlyChosenDate;
@@ -35,8 +37,7 @@ namespace Organizer
 		public MainWindow()
 		{
 			InitializeComponent();
-			dates = DataBase.GetAllDates();
-			dates.FindAllNotes();
+			FindNotes();
 			List<string> months = new List<string> { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
 			cboMonth.ItemsSource = months;
 
@@ -52,6 +53,25 @@ namespace Organizer
 
 			cboMonth.SelectionChanged += (o, e) => RefreshCalendar();
 			cboYear.SelectionChanged += (o, e) => RefreshCalendar();
+			SubscribeToEvents();
+		}
+
+		private void SubscribeToEvents()
+		{
+			OnDataBaseDataChange += RefreshCalendar;
+			OnDataBaseDataChange += FindNotes;
+		}
+
+		private void FindNotes()
+		{
+			dates = DataBase.GetAllDates();
+			dates.FindAllNotes();
+			if (currentlyChosenDate != null)
+			{
+				currentDateNotes = dates.ListOfDates.Find(x => x.CompareDates(currentlyChosenDate))?.Notes;
+				hours = dates?.ListOfDates.Find(x => x.CompareDates(currentlyChosenDate))?.GetNotesHours();
+				NotesList.ItemsSource = hours;
+			}
 		}
 
 		private void RefreshCalendar()
@@ -77,7 +97,7 @@ namespace Organizer
 			currentlyChosenDate.Year = e.Day.Date.Year;
 			currentlyChosenDate = DataBase.AddDate(currentlyChosenDate);
 
-			currentlyChosenNote = new Note();
+			ClearNote();
 
 			currentDateNotes = dates.ListOfDates.Find(x => x.CompareDates(currentlyChosenDate))?.Notes;
 			hours = dates?.ListOfDates.Find(x => x.CompareDates(currentlyChosenDate))?.GetNotesHours();
@@ -95,7 +115,6 @@ namespace Organizer
 			item.IsSelected = true;
 			NotesList.IsDropDownOpen = false;
 			SetNoteToView(item.Content.ToString());
-
 		}
 
 		private void SetNoteToView(string hour)
@@ -118,17 +137,34 @@ namespace Organizer
 				note.SetStartHour(StartHour.Value.ToString());
 				note.SetEndHour(EndHour.Value.ToString());
 				currentlyChosenNote = DataBase.AddNote(note);
+				OnDataBaseDataChange.Invoke();
 			}
 		}
 
 		private void NewNoteButtonClick(object sender, RoutedEventArgs e)
 		{
 			SaveNote(currentlyChosenNote);
+			ClearNote();
+		}
+
+		private void ClearNote()
+		{
 			currentlyChosenNote = new Note();
 			StartHour.Value = new DateTime();
 			EndHour.Value = new DateTime();
 			TagBox.Text = "";
 			NoteBox.Text = "";
+		}
+
+		private void DeleteNoteClickButton(object sender, RoutedEventArgs e)
+		{
+			DeleteNote(currentlyChosenNote);	
+		}
+
+		private void DeleteNote(Note note)
+		{
+			DataBase.DeleteNote(note);
+			OnDataBaseDataChange.Invoke();
 		}
 
 		private string NumberToMonth(int number)
