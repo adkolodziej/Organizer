@@ -8,138 +8,149 @@ using System.Windows.Controls;
 
 namespace Organizer
 {
-    public partial class MainWindow : Window
-    {
-        private enum Month
-        {
-            January = 1,
-            February,
-            March,
-            April,
-            May,
-            June,
-            July,
-            August,
-            September,
-            October,
-            November,
-            December
-        }
+	public partial class MainWindow : Window
+	{
+		private enum Month
+		{
+			January = 1,
+			February,
+			March,
+			April,
+			May,
+			June,
+			July,
+			August,
+			September,
+			October,
+			November,
+			December
+		}
 
-        public Dates dates;
+		public Dates dates;
 
-        private Date date;
-        private List<string> hours;
-        private List<Note> currentDateNotes;
-        public MainWindow()
-        {
-            InitializeComponent();
-            dates = DataBase.GetAllDates();
-            dates.FindAllNotes();
-            List<string> months = new List<string> { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
-            cboMonth.ItemsSource = months;
+		private Date currentlyChosenDate;
+		private List<string> hours;
+		private List<Note> currentDateNotes;
+		private Note currentlyChosenNote;
+		public MainWindow()
+		{
+			InitializeComponent();
+			dates = DataBase.GetAllDates();
+			dates.FindAllNotes();
+			List<string> months = new List<string> { "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December" };
+			cboMonth.ItemsSource = months;
 
-            for (int i = -50; i < 50; i++)
-            {
-                cboYear.Items.Add(DateTime.Today.AddYears(i).Year);
-            }
-
-
-            cboMonth.SelectedItem = months.FirstOrDefault(w => w == DateTime.Today.ToString("MMMM"));
-            cboYear.SelectedItem = DateTime.Today.Year;
-            cboMonth.SelectedIndex = DateTime.Today.Month - 1;
-
-            cboMonth.SelectionChanged += (o, e) => RefreshCalendar();
-            cboYear.SelectionChanged += (o, e) => RefreshCalendar();
-        }
-
-        private void RefreshCalendar()
-        {
-            if (cboYear.SelectedItem == null) return;
-            if (cboMonth.SelectedItem == null) return;
-
-            int year = (int)cboYear.SelectedItem;
-
-            int month = cboMonth.SelectedIndex + 1;
-
-            DateTime targetDate = new DateTime(year, month, 1);
-
-            myCalendar.BuildCalendar(targetDate);
-        }
-
-        public void Calendar_DayChanged(object sender, DayChangedEventArgs e)
-        {
-            chosenDay.Text = $"{e.Day.Date.Day} {NumberToMonth(e.Day.Date.Month)} {e.Day.Date.Year}"; //e.Day.Date.ToString();
-            date = new Date();
-            date.Day = e.Day.Date.Day;
-            date.Month = e.Day.Date.Month;
-            date.Year = e.Day.Date.Year;
-            date = DataBase.AddDate(date);
-
-            currentDateNotes = dates.ListOfDates.Find(x => x.CompareDates(date)).Notes;
-            hours = dates.ListOfDates.Find(x => x.CompareDates(date)).GetNotesHours();
-            NotesList.ItemsSource = hours;
+			for (int i = -50; i < 50; i++)
+			{
+				cboYear.Items.Add(DateTime.Today.AddYears(i).Year);
+			}
 
 
-            //save the text edits to persistant storage
-        }
+			cboMonth.SelectedItem = months.FirstOrDefault(w => w == DateTime.Today.ToString("MMMM"));
+			cboYear.SelectedItem = DateTime.Today.Year;
+			cboMonth.SelectedIndex = DateTime.Today.Month - 1;
 
-        private void SaveChangesButtonClick(object sender, RoutedEventArgs e)
-        {
-            Note note = new Note();
-            note.DateForeignKey = date.Id;
-            note.Content = NoteBox.Text;
-            note.SetStartHour(StartHour.Value.ToString());
-            note.SetEndHour(EndHour.Value.ToString());
-            note = DataBase.AddNote(note);
-        }
+			cboMonth.SelectionChanged += (o, e) => RefreshCalendar();
+			cboYear.SelectionChanged += (o, e) => RefreshCalendar();
+		}
 
-        private void ComboBoxItem_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            ComboBoxItem item = sender as ComboBoxItem;
-            item.IsSelected = true;
-            NotesList.IsDropDownOpen = false;
-            SetNoteToView(item.Content.ToString());
-        }
+		private void RefreshCalendar()
+		{
+			if (cboYear.SelectedItem == null) return;
+			if (cboMonth.SelectedItem == null) return;
 
-        //private void NotesList_DropDownClosed(object sender, EventArgs e)
-        //{
-        //    foreach (var item in hours)
-        //    {
-        //        if(item == NotesList.SelectedItem.ToString())
-        //        {
-        //            MessageBox.Show(item);
-        //        }
-        //    }
-        //}
-        private void SetNoteToView(string hour)
-        {
-            int index = hours.FindIndex(x => x == hour);
-            Note note = currentDateNotes[index];
-            StartHour.Value = note.GetStartHourAsDateTime();
-            EndHour.Value = note.GetEndHourAsDateTime();
-            NoteBox.Text = note.Content;
-        }
-        private string NumberToMonth(int number)
-        {
-            Month month = (Month)number;
-           
-            return month switch
-            {
-                Month.January => "January",
-                Month.February => "February",
-                Month.March => "March",
-                Month.April => "April",
-                Month.May => "May",
-                Month.June => "June",
-                Month.July => "July",
-                Month.August => "August",
-                Month.September => "September",
-                Month.October => "October",
-                Month.November => "November",
-                Month.December => "December",
-                _ => throw new NotImplementedException()
-            };
-        }
-    }
+			int year = (int)cboYear.SelectedItem;
+
+			int month = cboMonth.SelectedIndex + 1;
+
+			DateTime targetDate = new DateTime(year, month, 1);
+
+			myCalendar.BuildCalendar(targetDate);
+		}
+
+		public void Calendar_DayChanged(object sender, DayChangedEventArgs e)
+		{
+			chosenDay.Text = $"{e.Day.Date.Day} {NumberToMonth(e.Day.Date.Month)} {e.Day.Date.Year}"; //e.Day.Date.ToString();
+			currentlyChosenDate = new Date();
+			currentlyChosenDate.Day = e.Day.Date.Day;
+			currentlyChosenDate.Month = e.Day.Date.Month;
+			currentlyChosenDate.Year = e.Day.Date.Year;
+			currentlyChosenDate = DataBase.AddDate(currentlyChosenDate);
+
+			currentlyChosenNote = new Note();
+
+			currentDateNotes = dates.ListOfDates.Find(x => x.CompareDates(currentlyChosenDate))?.Notes;
+			hours = dates?.ListOfDates.Find(x => x.CompareDates(currentlyChosenDate))?.GetNotesHours();
+			NotesList.ItemsSource = hours;
+		}
+
+		private void SaveChangesButtonClick(object sender, RoutedEventArgs e)
+		{
+			SaveNote(currentlyChosenNote);
+		}
+
+		private void ComboBoxItem_PreviewMouseDown(object sender, System.Windows.Input.MouseButtonEventArgs e)
+		{
+			ComboBoxItem item = sender as ComboBoxItem;
+			item.IsSelected = true;
+			NotesList.IsDropDownOpen = false;
+			SetNoteToView(item.Content.ToString());
+
+		}
+
+		private void SetNoteToView(string hour)
+		{
+			int index = hours.FindIndex(x => x == hour);
+			currentlyChosenNote = currentDateNotes[index];
+			StartHour.Value = currentlyChosenNote.GetStartHourAsDateTime();
+			EndHour.Value = currentlyChosenNote.GetEndHourAsDateTime();
+			NoteBox.Text = currentlyChosenNote.Content;
+			TagBox.Text = currentlyChosenNote.Tag;
+		}
+
+		private void SaveNote(Note note)
+		{
+			if (note != null || currentlyChosenDate == null)
+			{
+				note.DateForeignKey = currentlyChosenDate.Id;
+				note.Content = NoteBox.Text;
+				note.Tag = TagBox.Text;
+				note.SetStartHour(StartHour.Value.ToString());
+				note.SetEndHour(EndHour.Value.ToString());
+				currentlyChosenNote = DataBase.AddNote(note);
+			}
+		}
+
+		private void NewNoteButtonClick(object sender, RoutedEventArgs e)
+		{
+			SaveNote(currentlyChosenNote);
+			currentlyChosenNote = new Note();
+			StartHour.Value = new DateTime();
+			EndHour.Value = new DateTime();
+			TagBox.Text = "";
+			NoteBox.Text = "";
+		}
+
+		private string NumberToMonth(int number)
+		{
+			Month month = (Month)number;
+
+			return month switch
+			{
+				Month.January => "January",
+				Month.February => "February",
+				Month.March => "March",
+				Month.April => "April",
+				Month.May => "May",
+				Month.June => "June",
+				Month.July => "July",
+				Month.August => "August",
+				Month.September => "September",
+				Month.October => "October",
+				Month.November => "November",
+				Month.December => "December",
+				_ => throw new NotImplementedException()
+			};
+		}
+	}
 }
