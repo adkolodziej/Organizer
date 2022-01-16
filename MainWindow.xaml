@@ -31,6 +31,7 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="auto"/>
                     <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
 
                 <Border Padding="10" Grid.Row="0" Background="Gray" TextBlock.FontFamily="Century Gothic" TextBlock.FontSize="15">
@@ -143,11 +144,28 @@
                             <Organizer:Calendar x:Name="myCalendar" DayChanged="Calendar_DayChanged" Margin="0,46,0,0" />
                             <ComboBox x:Name="cboMonth" HorizontalAlignment="Left" Height="34" Margin="8,8,0,0" VerticalAlignment="Top" Width="152" FontSize="18.667" DisplayMemberPath="{Binding}" />
                             <ComboBox x:Name="cboYear" Height="34" Margin="164,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="87" FontSize="18.667" DisplayMemberPath="{Binding}" />
-                            <Button Content="Filter:" Click="FilterButtonClick" Height="34" Margin="256,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" FontSize="18.667"/>
-                            <ComboBox x:Name="Filter"  Height="34" Margin="361,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" FontSize="18.667" ItemsSource="{Binding Source={StaticResource enumValues}}" SelectedIndex="0"/>
-                            <TextBox x:Name="FilterBox" Height="34" Margin="466,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" FontSize="18.667"/>
                         </Grid>
+                    </Grid>
+                </Border>
+                <Border Grid.Row="2">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
 
+                        <StackPanel Orientation="Horizontal" Grid.Row="0">
+                            <Button Content="Filter:" Click="FilterButtonClick" Height="34" Margin="380,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" FontSize="18.667"/>
+                            <ComboBox x:Name="Filter"  Height="34" Margin="10,8,0,0" VerticalAlignment="Top" Width="151" FontSize="18.667" ItemsSource="{Binding Source={StaticResource enumValues}}" SelectedIndex="0"/>
+                            <TextBox x:Name="FilterBox" Height="34" Margin="10,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="200" FontSize="18.667"/>
+                        </StackPanel>
+
+                        <StackPanel Background="MediumPurple" Grid.Row="1" Orientation="Horizontal" Margin="380,10,200,0">
+                            <TextBlock Text="From: " Background="White"  FontSize="20" Foreground="Black" TextBlock.FontFamily="Century Gothic"/>
+                            <syncfusion:SfTimePicker Name="StartHourFilter" SetValueOnLostFocus="True" FormatString="HH:mm tt" Width="87"/>
+                            <TextBlock Text="To: " Background="White" FontSize="20" Foreground="Black" TextBlock.FontFamily="Century Gothic" Margin="80 0 0 0" Width="44"/>
+                            <syncfusion:SfTimePicker x:Name="EndHourFilter" SetValueOnLostFocus="True" FormatString="HH:mm tt" Width="87"/>
+                        </StackPanel>
                     </Grid>
                 </Border>
             </Grid>

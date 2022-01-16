@@ -172,7 +172,19 @@ namespace Organizer
 
 		private void FilterButtonClick(object sender, RoutedEventArgs e)
 		{
-			FilteredData.GetInstance().FilterData((FilterType)Filter.SelectedValue, dates, FilterBox.Text);
+			var filterType = (FilterType)Filter.SelectedValue;
+			if (filterType != FilterType.StartHour && filterType != FilterType.EndHour)
+			{
+				FilteredData.GetInstance().FilterData(filterType, dates, FilterBox.Text);				
+			}
+			else if(filterType == FilterType.StartHour)
+			{
+				FilteredData.GetInstance().FilterData(filterType, dates, StartHourFilter.Value.ToString());
+			}
+			else
+			{
+				FilteredData.GetInstance().FilterData(filterType, dates, EndHourFilter.Value.ToString());
+			}
 			OnCalendarDataChanged.Invoke();
 		}
 

@@ -38,12 +38,12 @@ namespace Organizer.Models
             {
                 var splitDateTime = time.Split(" ");
                 var splitHour = splitDateTime[1].Split(":");
-                StartHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), Convert.ToInt32(splitHour[2]));
+                StartHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), 0);
             }
             else
             {
                 var splitHour = time.Split(":");
-                StartHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), Convert.ToInt32(splitHour[2]));
+                StartHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), 0);
             }
 
         }
@@ -54,12 +54,12 @@ namespace Organizer.Models
             {
                 var splitDateTime = time.Split(" ");
                 var splitHour = splitDateTime[1].Split(":");
-                EndHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), Convert.ToInt32(splitHour[2]));
+                EndHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), 0);
             }
             else
             {
                 var splitHour = time.Split(":");
-                EndHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), Convert.ToInt32(splitHour[2]));
+                EndHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), 0);
             }
         }
 
@@ -78,7 +78,7 @@ namespace Organizer.Models
 		{
             var splitDateTime = startHour.Split(" ");
             var splitHour = splitDateTime[1].Split(":");
-            var tempStartHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), Convert.ToInt32(splitHour[2]));
+            var tempStartHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), 0);
             if(StartHour == tempStartHour)
 			{
                 return true;
@@ -93,7 +93,7 @@ namespace Organizer.Models
         {
             var splitDateTime = endHour.Split(" ");
             var splitHour = splitDateTime[1].Split(":");
-            var tempEndHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), Convert.ToInt32(splitHour[2]));
+            var tempEndHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), 0);
             if (StartHour == tempEndHour)
             {
                 return true;

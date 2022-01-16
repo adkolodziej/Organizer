@@ -62,7 +62,7 @@ namespace Organizer.Filters
 		{
 			foreach (Date date in dates.ListOfDates)
 			{
-				Note note = date.Notes.Find(x => x.Tag == tag);
+				Note note = date.Notes.Find(x => x.Tag.ToUpper() == tag.ToUpper());
 				if (note != null)
 				{
 					dateFilterPair.Add(date.Id, true);
@@ -110,7 +110,7 @@ namespace Organizer.Filters
 		{
 			foreach (Date date in dates.ListOfDates)
 			{
-				Note note = date.Notes.Find(x => x.Content.Contains(content));
+				Note note = date.Notes.Find(x => x.Content.ToUpper().Contains(content.ToUpper()));
 				if (note != null)
 				{
 					dateFilterPair.Add(date.Id, true);
