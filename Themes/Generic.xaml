@@ -6,6 +6,7 @@
     xmlns:Converters="clr-namespace:Organizer.Converters">
     <Converters:DateConverter x:Key="DateConverter"/>
     <Converters:DayBorderColorConverter x:Key="DayBorderColorConverter"/>
+    <Converters:DayBackgroundColorConverter x:Key="DayBackgroundColorConverter"/>
 
     <Style TargetType="{x:Type Organizer:Calendar}">
         <Setter Property="Template">
@@ -47,7 +48,7 @@
                                 <ItemsControl.ItemTemplate>
                                     <DataTemplate>
                                         <!--Box-->
-                                        <Border BorderBrush="Black" BorderThickness="1" Padding="0">
+                                        <Border BorderBrush="{Binding IsFiltered, Converter={StaticResource DayBackgroundColorConverter}}" BorderThickness="1" Padding="0">
 
                                             <Border Name="InnerBorder" BorderBrush="{Binding Path=Notes, Converter={StaticResource DayBorderColorConverter}}" BorderThickness="2">
 

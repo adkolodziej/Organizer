@@ -6,20 +6,15 @@ using System.Windows.Media;
 
 namespace Organizer.Converters
 {
-	public class DayBorderColorConverter : IValueConverter
+	public class DayBackgroundColorConverter : IValueConverter
 	{
 		public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
 		{
-			string notes = (string)value;
+			bool isFiltered = (bool)value;
 
-			if (string.IsNullOrEmpty(notes))
-			{ 
-				return null; 
-			}
-
-			if (notes.Length > 0)
+			if (isFiltered == true)
 			{
-				return new LinearGradientBrush(Color.FromRgb(220, 74, 56), Color.FromRgb(198, 56, 40), new Point(0.5, 0), new Point(0.5, 1));
+				return new LinearGradientBrush(Color.FromRgb(101, 198, 148), Color.FromRgb(80, 164, 30), new Point(0.5, 0), new Point(0.5, 1));
 			}
 
 			return null;

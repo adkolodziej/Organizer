@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:System="clr-namespace:System;assembly=mscorlib"
         xmlns:Organizer="clr-namespace:Organizer"
+        xmlns:Enum="clr-namespace:Organizer.Filters"
         mc:Ignorable="d"
         Title="Organizer" Height="602" Width="1000" Foreground="White">
 
@@ -15,6 +17,14 @@
         </RadialGradientBrush>
     </Window.Background>
 
+    <Window.Resources>
+        <ObjectDataProvider x:Key="enumValues"
+            MethodName="GetValues" ObjectType="{x:Type System:Enum}">
+            <ObjectDataProvider.MethodParameters>
+                <x:Type TypeName="Enum:FilterType"/>
+            </ObjectDataProvider.MethodParameters>
+        </ObjectDataProvider>
+    </Window.Resources>
     <Border Background="MediumPurple">
         <StackPanel Orientation="Vertical">
             <Grid>
@@ -133,6 +143,9 @@
                             <Organizer:Calendar x:Name="myCalendar" DayChanged="Calendar_DayChanged" Margin="0,46,0,0" />
                             <ComboBox x:Name="cboMonth" HorizontalAlignment="Left" Height="34" Margin="8,8,0,0" VerticalAlignment="Top" Width="152" FontSize="18.667" DisplayMemberPath="{Binding}" />
                             <ComboBox x:Name="cboYear" Height="34" Margin="164,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="87" FontSize="18.667" DisplayMemberPath="{Binding}" />
+                            <Button Content="Filter:" Click="FilterButtonClick" Height="34" Margin="256,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" FontSize="18.667"/>
+                            <ComboBox x:Name="Filter"  Height="34" Margin="361,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" FontSize="18.667" ItemsSource="{Binding Source={StaticResource enumValues}}" SelectedIndex="0"/>
+                            <TextBox x:Name="FilterBox" Height="34" Margin="466,8,0,0" VerticalAlignment="Top" HorizontalAlignment="Left" Width="100" FontSize="18.667"/>
                         </Grid>
 
                     </Grid>

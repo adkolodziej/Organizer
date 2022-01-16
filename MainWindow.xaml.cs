@@ -1,4 +1,5 @@
-﻿using Organizer.Models;
+﻿using Organizer.Filters;
+using Organizer.Models;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -26,11 +27,12 @@ namespace Organizer
 			December
 		}
 
-		private event Action OnDataBaseDataChange;
+		private event Action OnCalendarDataChanged;
 
 		public Dates dates;
 
 		private Date currentlyChosenDate;
+		private Date beforeRefreshDate;
 		private List<string> hours;
 		private List<Note> currentDateNotes;
 		private Note currentlyChosenNote;
@@ -58,8 +60,8 @@ namespace Organizer
 
 		private void SubscribeToEvents()
 		{
-			OnDataBaseDataChange += RefreshCalendar;
-			OnDataBaseDataChange += FindNotes;
+			OnCalendarDataChanged += RefreshCalendar;
+			OnCalendarDataChanged += FindNotes;
 		}
 
 		private void FindNotes()
@@ -90,7 +92,7 @@ namespace Organizer
 
 		public void Calendar_DayChanged(object sender, DayChangedEventArgs e)
 		{
-			chosenDay.Text = $"{e.Day.Date.Day} {NumberToMonth(e.Day.Date.Month)} {e.Day.Date.Year}"; //e.Day.Date.ToString();
+			chosenDay.Text = $"{e.Day.Date.Day} {NumberToMonth(e.Day.Date.Month)} {e.Day.Date.Year}";
 			currentlyChosenDate = new Date();
 			currentlyChosenDate.Day = e.Day.Date.Day;
 			currentlyChosenDate.Month = e.Day.Date.Month;
@@ -137,13 +139,13 @@ namespace Organizer
 				note.SetStartHour(StartHour.Value.ToString());
 				note.SetEndHour(EndHour.Value.ToString());
 				currentlyChosenNote = DataBase.AddNote(note);
-				OnDataBaseDataChange.Invoke();
+				beforeRefreshDate = currentlyChosenDate;
+				OnCalendarDataChanged.Invoke();
 			}
 		}
 
 		private void NewNoteButtonClick(object sender, RoutedEventArgs e)
 		{
-			SaveNote(currentlyChosenNote);
 			ClearNote();
 		}
 
@@ -164,7 +166,14 @@ namespace Organizer
 		private void DeleteNote(Note note)
 		{
 			DataBase.DeleteNote(note);
-			OnDataBaseDataChange.Invoke();
+			beforeRefreshDate = currentlyChosenDate;
+			OnCalendarDataChanged.Invoke();
+		}
+
+		private void FilterButtonClick(object sender, RoutedEventArgs e)
+		{
+			FilteredData.GetInstance().FilterData((FilterType)Filter.SelectedValue, dates, FilterBox.Text);
+			OnCalendarDataChanged.Invoke();
 		}
 
 		private string NumberToMonth(int number)
@@ -188,5 +197,6 @@ namespace Organizer
 				_ => throw new NotImplementedException()
 			};
 		}
+
 	}
 }

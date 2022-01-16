@@ -34,6 +34,7 @@ namespace Organizer
         private bool enabled;
         private bool isTargetMonth;
         private bool isToday;
+        private bool isFiltered;
 
         public bool IsToday
         {
@@ -84,6 +85,16 @@ namespace Organizer
                 if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("Date"));
             }
         }
+
+        public bool IsFiltered
+		{
+			get { return isFiltered; }
+			set
+			{
+                isFiltered = value;
+                if (PropertyChanged != null) PropertyChanged(this, new PropertyChangedEventArgs("IsFiltered"));
+			}
+		}
 
         public void IsClicked()
         {

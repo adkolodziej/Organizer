@@ -73,5 +73,35 @@ namespace Organizer.Models
         {
             return new DateTime(DateTime.Today.Year, DateTime.Today.Month, DateTime.Today.Day, EndHour.Hours, EndHour.Minutes, EndHour.Seconds);
         }
+
+        public bool CompareStartHour(string startHour)
+		{
+            var splitDateTime = startHour.Split(" ");
+            var splitHour = splitDateTime[1].Split(":");
+            var tempStartHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), Convert.ToInt32(splitHour[2]));
+            if(StartHour == tempStartHour)
+			{
+                return true;
+			}
+			else
+			{
+                return false;
+			}
+        }
+
+        public bool CompareEndHour(string endHour)
+        {
+            var splitDateTime = endHour.Split(" ");
+            var splitHour = splitDateTime[1].Split(":");
+            var tempEndHour = new TimeSpan(Convert.ToInt32(splitHour[0]), Convert.ToInt32(splitHour[1]), Convert.ToInt32(splitHour[2]));
+            if (StartHour == tempEndHour)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
 }

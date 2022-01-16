@@ -1,9 +1,11 @@
-﻿using Organizer.Models;
+﻿using Organizer.Filters;
+using Organizer.Models;
 using System;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
+
 namespace Organizer
 {
     public class Calendar : Control
@@ -17,8 +19,14 @@ namespace Organizer
 
         public DateTime CurrentDate
         {
-            get { return (DateTime)GetValue(CurrentDateProperty); }
-            set { SetValue(CurrentDateProperty, value); }
+            get
+            { 
+                return (DateTime)GetValue(CurrentDateProperty); 
+            }
+            set 
+            { 
+                SetValue(CurrentDateProperty, value); 
+            }
         }
 
         static Calendar()
@@ -48,6 +56,11 @@ namespace Organizer
             DateTime d = new DateTime(targetDate.Year, targetDate.Month, 1);
             int offset = DayOfWeekNumber(d.DayOfWeek) - 1;
             if (offset != 1) d = d.AddDays(-offset);
+            bool isThereAnyFiler = false; ;
+            if (FilteredData.GetInstance().DateFilterPair.Count > 0)
+            {
+                isThereAnyFiler = true;
+            }
 
             //Show 6 weeks each with 7 days = 42
             for (int box = 1; box <= 42; box++)
@@ -56,6 +69,21 @@ namespace Organizer
                 day.PropertyChanged += Day_Changed;
                 day.ButtonClicked += OnDayChosen;
                 day.IsToday = d == DateTime.Today;
+
+                if(!isThereAnyFiler)
+				{
+                    day.IsFiltered = false;
+				}
+				else
+				{
+                    bool isFiltered = false;
+                    Date filteredDate = dates.ListOfDates.Find(x => x.Day == day.Date.Day && x.Month == day.Date.Month && x.Year == day.Date.Year);
+                    if (filteredDate != null)
+                    {
+                        FilteredData.GetInstance().DateFilterPair.TryGetValue(filteredDate.Id, out isFiltered);
+                        day.IsFiltered = isFiltered;
+                    }
+                }
                 Date date = dates.ListOfDates.Find(x => x.Day == day.Date.Day && x.Month == day.Date.Month && x.Year == day.Date.Year && x.Notes != null && x.Notes.Count > 0);
                 if (date != null)
                 {
@@ -68,15 +96,24 @@ namespace Organizer
 
         private void Day_Changed(object sender, PropertyChangedEventArgs e)
         {
-            if (e.PropertyName != "Notes") return;
-            if (DayChanged == null) return;
+            if (e.PropertyName != "Notes")
+            {
+                return;
+            }
+            if (DayChanged == null)
+            {
+                return;
+            }
 
             DayChanged(this, new DayChangedEventArgs(sender as CalendarDay));
         }
 
         private void OnDayChosen(object sender, EventArgs e)
         {
-            if (DayChanged == null) return;
+            if (DayChanged == null)
+            {
+                return;
+            }
 
             DayChanged(this, new DayChangedEventArgs(sender as CalendarDay));
         }
